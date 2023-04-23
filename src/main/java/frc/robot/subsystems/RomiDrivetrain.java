@@ -36,7 +36,7 @@ public class RomiDrivetrain extends SubsystemBase {
         resetEncoders();
 
         // Invert right side since motor is flipped
-        rightMotor.setInverted(true);
+        leftMotor.setInverted(true);
     }
 
     public void arcadeDrive(double speed, double rotation) {
