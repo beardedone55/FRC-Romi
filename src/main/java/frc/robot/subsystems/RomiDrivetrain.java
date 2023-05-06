@@ -6,15 +6,18 @@
 
 package frc.robot.subsystems;
 
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.kinematics.DifferentialDriveOdometry;
+import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.motorcontrol.Spark;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.sensors.RomiGyro;
+import static frc.robot.Constants.DriveTrain.*;
 
 public class RomiDrivetrain extends SubsystemBase {
-    private static final double kCountsPerRevolution = 1440.0;
-    private static final double kWheelDiameterInch = 2.75591; // 70 mm
+  
 
     // The Romi has the left and right motors set to
     // PWM channels 0 and 1 respectively
@@ -34,37 +37,64 @@ public class RomiDrivetrain extends SubsystemBase {
     // Set up the differential drive controller
     private final DifferentialDrive diffDrive = new DifferentialDrive(leftMotor, rightMotor);
 
+    //Create Odometry object, which keeps track of the robot's location on the field.
+    private final DifferentialDriveOdometry odometry;
+
     /** Creates a new RomiDrivetrain. */
     public RomiDrivetrain() {
-        // Use inches as unit for encoder distances
-        leftEncoder.setDistancePerPulse((Math.PI * kWheelDiameterInch) / kCountsPerRevolution);
-        rightEncoder.setDistancePerPulse((Math.PI * kWheelDiameterInch) / kCountsPerRevolution);
+        // Use inches as meters for encoder distances
+        leftEncoder.setDistancePerPulse((Math.PI * kWheelDiameterMeter) / kCountsPerRevolution);
+        rightEncoder.setDistancePerPulse((Math.PI * kWheelDiameterMeter) / kCountsPerRevolution);
         resetEncoders();
 
         // Invert right side since motor is flipped
         leftMotor.setInverted(true);
+
+        odometry = new DifferentialDriveOdometry(gyro.getRotation2d(), leftEncoder.getDistance(), rightEncoder.getDistance());
+    }
+
+    public Pose2d getPose() {
+        return odometry.getPoseMeters();
+    }
+
+    public void resetOdometry(Pose2d pose) {
+        odometry.resetPosition(gyro.getRotation2d(), leftEncoder.getDistance(), rightEncoder.getDistance(), pose);
     }
 
     public void arcadeDrive(double speed, double rotation) {
         diffDrive.arcadeDrive(speed, rotation, true);
     }
 
+    public void tankDriveVolts(double leftVoltage, double rightVoltage) {
+        leftMotor.setVoltage(leftVoltage);
+        rightMotor.setVoltage(rightVoltage);
+    }
+
+    public double getHeading() {
+        return gyro.getAngleZ();
+    }
+
+    public DifferentialDriveWheelSpeeds getWheelSpeeds() {
+        return new DifferentialDriveWheelSpeeds(leftEncoder.getRate(), rightEncoder.getRate());
+    } 
+
     public void resetEncoders() {
         leftEncoder.reset();
         rightEncoder.reset();
     }
 
-    public double getLeftDistanceInch() {
+    public double getLeftDistanceMeters() {
         return leftEncoder.getDistance();
     }
 
-    public double getRightDistanceInch() {
+    public double getRightDistanceMeters() {
         return rightEncoder.getDistance();
     }
 
     @Override
     public void periodic() {
     // This method will be called once per scheduler run
+        odometry.update(gyro.getRotation2d(), leftEncoder.getDistance(), rightEncoder.getDistance());
     }
 
     @Override

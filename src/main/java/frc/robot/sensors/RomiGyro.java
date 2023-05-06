@@ -6,6 +6,7 @@ package frc.robot.sensors;
 
 import edu.wpi.first.hal.SimDevice;
 import edu.wpi.first.hal.SimDevice.Direction;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.hal.SimDouble;
 
 public class RomiGyro {
@@ -119,6 +120,10 @@ public class RomiGyro {
     }
 
     return 0.0;
+  }
+
+  public Rotation2d getRotation2d() {
+    return Rotation2d.fromDegrees(getAngleZ());
   }
 
   /** Reset the gyro angles to 0. */
