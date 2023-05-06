@@ -48,7 +48,7 @@ public class RomiDrivetrain extends SubsystemBase {
         resetEncoders();
 
         // Invert right side since motor is flipped
-        leftMotor.setInverted(true);
+        rightMotor.setInverted(true);
 
         odometry = new DifferentialDriveOdometry(gyro.getRotation2d(), leftEncoder.getDistance(), rightEncoder.getDistance());
     }

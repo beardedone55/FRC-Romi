@@ -14,11 +14,15 @@ import static frc.robot.Constants.DriveTrain.kinematics;
 import static frc.robot.Constants.DriveTrain.ksVolts;
 import static frc.robot.Constants.DriveTrain.kvVoltSecondsPerMeter;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.RamseteController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.trajectory.TrajectoryConfig;
 import edu.wpi.first.math.trajectory.TrajectoryGenerator;
@@ -34,6 +38,7 @@ public class TrajectoryTest extends RamseteCommand {
      * @param subsystem The subsystem used by this command.
      */
 
+    private static final TrajectoryConfig trajectoryConfig = getTrajectoryConfig();
     private static final Trajectory trajectory = getTrajectory();
 
     public TrajectoryTest(RomiDrivetrain drivebase) {
@@ -60,19 +65,28 @@ public class TrajectoryTest extends RamseteCommand {
                 kvVoltSecondsPerMeter, 
                 kaVoltSecondsSquaredPerMeter),
             kinematics,
-            10);
+            8);
     }
 
     private static TrajectoryConfig getTrajectoryConfig() {
-        return new TrajectoryConfig(
+        TrajectoryConfig trajectoryConfig = new TrajectoryConfig(
                 kMaxSpeedMetersPerSecond, 
-                kMaxAccelerationMetersPerSecondSquared)
-            .setKinematics(kinematics)
-            .addConstraint(getVoltageConstraint());
+                kMaxAccelerationMetersPerSecondSquared);
+        trajectoryConfig
+             .setKinematics(kinematics);
+             //.addConstraint(getVoltageConstraint());
+        return trajectoryConfig;
     }
 
     private static Trajectory getTrajectory() {
+        List<Translation2d> waypoints = new ArrayList<>();
+        waypoints.add(new Translation2d(1,1));
+        //waypoints.add(new Translation2d(2,-1));
+
         return TrajectoryGenerator.generateTrajectory(
-            new Pose2d(0,0,new Rotation2d(0)), null, new Pose2d(3, 0, new Rotation2d(0)), getTrajectoryConfig());
+            new Pose2d(0,0,new Rotation2d(0)), 
+            waypoints,
+            new Pose2d(3, 0, new Rotation2d(0)), 
+            trajectoryConfig);
     }
 }

@@ -25,7 +25,7 @@ public final class Constants {
         public static final double kCountsPerRevolution = 1440.0;
         public static final double kWheelDiameterMeter = 0.07; //2.75591 inches
 
-        public static final double kMaxSpeedMetersPerSecond = 3.0;
+        public static final double kMaxSpeedMetersPerSecond = 0.5;
         public static final double kMaxAccelerationMetersPerSecondSquared = 3.0;
 
         public static final double kRamseteB = 2.0;

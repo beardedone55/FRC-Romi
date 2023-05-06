@@ -31,7 +31,7 @@ public class RobotContainer {
         // Configure the button bindings
         configureButtonBindings();
         final int xboxOneRightXaxis = 3;
-        manualDriveCommand = new ManualDrive(romiDrivetrain, ()->{return xboxController.getLeftY();}, ()->{return xboxController.getRawAxis(xboxOneRightXaxis);});
+        manualDriveCommand = new ManualDrive(romiDrivetrain, ()->{return -xboxController.getLeftY();}, ()->{return -xboxController.getRawAxis(xboxOneRightXaxis);});
         romiDrivetrain.setDefaultCommand(manualDriveCommand);
     }
 
